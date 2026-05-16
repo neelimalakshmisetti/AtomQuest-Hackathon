@@ -10,6 +10,7 @@ const AdminDashboard = () => {
   const [config, setConfig] = useState(null);
   const [logs, setLogs] = useState([]);
   const [stats, setStats] = useState({ approved: 0, pending: 0, rejected: 0, draft: 0 });
+  const [allGoals, setAllGoals] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -25,6 +26,7 @@ const AdminDashboard = () => {
 
       const goalsRes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals`, { headers: { Authorization: `Bearer ${user.token}` } });
       const goals = goalsRes.data;
+      setAllGoals(goals);
       
       let approved = 0, pending = 0, rejected = 0, draft = 0;
       goals.forEach(g => {
@@ -47,6 +49,33 @@ const AdminDashboard = () => {
     } catch (err) {
       alert('Error updating cycle');
     }
+  };
+
+  const downloadCSV = () => {
+    if (allGoals.length === 0) return alert('No goals data to export.');
+    
+    const headers = ['Employee Name', 'Goal Title', 'Thrust Area', 'Target', 'UoM', 'Weightage', 'Status'];
+    const rows = allGoals.map(g => [
+      g.employee?.name || 'Unknown',
+      `"${g.title}"`,
+      `"${g.thrustArea}"`,
+      g.target,
+      g.uomType,
+      g.weightage + '%',
+      g.status
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(',') + "\n" 
+      + rows.map(e => e.join(',')).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "Achievement_Report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const chartData = [
@@ -84,7 +113,14 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 p-8 overflow-y-auto">
-        <h1 className="text-3xl font-bold text-slate-800 mb-8">{activeTab}</h1>
+        <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-slate-800">{activeTab}</h1>
+            {activeTab === 'Overview' && (
+                <button onClick={downloadCSV} className="flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm font-medium">
+                    <FileText size={18} className="mr-2" /> Export CSV Report
+                </button>
+            )}
+        </div>
 
         {activeTab === 'Overview' && (
             <div className="space-y-8 animate-fade-in-up">
