@@ -17,13 +17,13 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const configRes = await axios.get('http://localhost:5000/api/admin/config', { headers: { Authorization: `Bearer ${user.token}` } });
+      const configRes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/config`, { headers: { Authorization: `Bearer ${user.token}` } });
       setConfig(configRes.data);
 
-      const logsRes = await axios.get('http://localhost:5000/api/admin/audit-logs', { headers: { Authorization: `Bearer ${user.token}` } });
+      const logsRes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/audit-logs`, { headers: { Authorization: `Bearer ${user.token}` } });
       setLogs(logsRes.data);
 
-      const goalsRes = await axios.get('http://localhost:5000/api/goals', { headers: { Authorization: `Bearer ${user.token}` } });
+      const goalsRes = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals`, { headers: { Authorization: `Bearer ${user.token}` } });
       const goals = goalsRes.data;
       
       let approved = 0, pending = 0, rejected = 0, draft = 0;
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
 
   const handleCycleChange = async (newCycle) => {
     try {
-      await axios.put('http://localhost:5000/api/admin/config', { currentCycle: newCycle }, { headers: { Authorization: `Bearer ${user.token}` } });
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/admin/config`, { currentCycle: newCycle }, { headers: { Authorization: `Bearer ${user.token}` } });
       fetchData();
       alert('Cycle updated successfully');
     } catch (err) {

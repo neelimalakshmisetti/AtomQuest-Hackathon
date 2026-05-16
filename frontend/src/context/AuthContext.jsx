@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
           const config = {
             headers: { Authorization: `Bearer ${token}` }
           };
-          const { data } = await axios.get('http://localhost:5000/api/auth/me', config);
+          const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/me`, config);
           setUser({ ...data, token });
         } catch (error) {
           console.error('Error fetching user', error);
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/login`, { email, password });
       setUser(data);
       localStorage.setItem('token', data.token);
       return data;

@@ -12,7 +12,7 @@ const ManagerDashboard = () => {
 
   const fetchTeamGoals = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/goals', { headers: { Authorization: `Bearer ${user.token}` } });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals`, { headers: { Authorization: `Bearer ${user.token}` } });
       setGoals(res.data);
     } catch (err) {
       console.error(err);
@@ -30,7 +30,7 @@ const ManagerDashboard = () => {
     }
     
     try {
-      await axios.put(`http://localhost:5000/api/goals/${id}/status`, { status, managerComment: comment }, { headers: { Authorization: `Bearer ${user.token}` } });
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals/${id}/status`, { status, managerComment: comment }, { headers: { Authorization: `Bearer ${user.token}` } });
       setComment('');
       setSelectedGoalId(null);
       fetchTeamGoals();

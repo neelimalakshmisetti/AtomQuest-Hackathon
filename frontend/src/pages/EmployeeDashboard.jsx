@@ -11,7 +11,7 @@ const EmployeeDashboard = () => {
 
   const fetchGoals = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/goals', { headers: { Authorization: `Bearer ${user.token}` } });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals`, { headers: { Authorization: `Bearer ${user.token}` } });
       setGoals(res.data);
     } catch (err) {
       console.error(err);
@@ -27,7 +27,7 @@ const EmployeeDashboard = () => {
   const handleAddGoal = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/goals', newGoal, { headers: { Authorization: `Bearer ${user.token}` } });
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals`, newGoal, { headers: { Authorization: `Bearer ${user.token}` } });
       setShowForm(false);
       setNewGoal({ title: '', description: '', thrustArea: 'Financial', uomType: 'Percentage', target: '', weightage: '' });
       fetchGoals();
@@ -38,7 +38,7 @@ const EmployeeDashboard = () => {
 
   const handleSubmitGoals = async () => {
     try {
-      await axios.post('http://localhost:5000/api/goals/submit', {}, { headers: { Authorization: `Bearer ${user.token}` } });
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/goals/submit`, {}, { headers: { Authorization: `Bearer ${user.token}` } });
       alert('Goals submitted successfully!');
       fetchGoals();
     } catch (err) {
